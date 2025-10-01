@@ -1,0 +1,21 @@
+package com.example.notepad.domain
+
+import kotlinx.coroutines.flow.Flow
+import java.time.temporal.TemporalQuery
+
+interface NoteRepository {
+    fun getAllNotes(): Flow<List<Note>>
+
+    fun addNote(note: Note)
+
+    fun deleteNote(noteId: Int)
+
+    fun editNote(note: Note)
+
+    fun searchNote(query: String): Flow<List<Note>>
+
+    fun switchPinnedStatus(noteId: Int)
+
+
+    fun getNote(noteId: Int): Note
+}
