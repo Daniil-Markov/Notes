@@ -1,10 +1,12 @@
 package com.example.notepad.data
 
+import androidx.compose.runtime.currentRecomposeScope
 import com.example.notepad.domain.Note
 import com.example.notepad.domain.NoteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 object NotesRepositoryImpl: NoteRepository {
@@ -15,11 +17,6 @@ object NotesRepositoryImpl: NoteRepository {
         return notesListFlow.asStateFlow()
     }
 
-    override fun addNote(note: Note) {
-        notesListFlow.update {
-            it + note
-        }
-    }
 
     override fun deleteNote(noteId: Int) {
         notesListFlow.update { oldList ->
@@ -42,9 +39,24 @@ object NotesRepositoryImpl: NoteRepository {
     }
 
     override fun searchNote(query: String): Flow<List<Note>> {
-        val currentList = notesListFlow.value
-        currentList.filter{
-            it.content == query
+        return notesListFlow.map { currentList ->
+            currentList.filter {
+                it.title.contains(query) || it.content.contains(query)
+            }
+        }
+
+    }
+
+    override fun addNote(title: String, content: String) {
+        notesListFlow.update { oldList ->
+            val note = Note(
+                noteId = oldList.size,
+                title = title,
+                content = content,
+                updateAt = System.currentTimeMillis(),
+                isPinned = false
+            )
+            oldList + note
         }
     }
 

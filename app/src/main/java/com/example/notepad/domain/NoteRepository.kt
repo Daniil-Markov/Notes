@@ -6,7 +6,10 @@ import java.time.temporal.TemporalQuery
 interface NoteRepository {
     fun getAllNotes(): Flow<List<Note>>
 
-    fun addNote(note: Note)
+    fun addNote(
+        title: String,
+        content: String
+    )
 
     fun deleteNote(noteId: Int)
 
