@@ -1,24 +1,27 @@
 package com.example.notepad.domain
 
+import androidx.compose.runtime.Updater
 import kotlinx.coroutines.flow.Flow
 import java.time.temporal.TemporalQuery
 
 interface NoteRepository {
     fun getAllNotes(): Flow<List<Note>>
 
-    fun addNote(
+    suspend fun addNote(
         title: String,
-        content: String
+        content: String,
+        isPinned: Boolean,
+        updateAt: Long
     )
 
-    fun deleteNote(noteId: Int)
+    suspend fun deleteNote(noteId: Int)
 
-    fun editNote(note: Note)
+    suspend fun editNote(note: Note)
 
     fun searchNote(query: String): Flow<List<Note>>
 
-    fun switchPinnedStatus(noteId: Int)
+    suspend fun switchPinnedStatus(noteId: Int)
 
 
-    fun getNote(noteId: Int): Note
+    suspend fun getNote(noteId: Int): Note
 }

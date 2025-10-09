@@ -1,26 +1,26 @@
 package com.example.notepad
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.notepad.presentation.screens.NotesScreen
+import com.example.notepad.presentation.navigation.CustomNavGraph
 import com.example.notepad.ui.theme.NotePadTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val context: Context = this.applicationContext
         enableEdgeToEdge()
         setContent {
             NotePadTheme {
-                NotesScreen()
+                CustomNavGraph()
+//                CreateNoteScreen(
+//                    onFinished = {
+//                        Log.d("CreateNoteScreen", "Finished")
+//                    }
+//                )
             }
         }
     }
