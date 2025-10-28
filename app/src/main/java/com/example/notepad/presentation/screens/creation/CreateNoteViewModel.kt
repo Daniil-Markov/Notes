@@ -5,15 +5,34 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notepad.data.NotesRepositoryImpl
 import com.example.notepad.domain.AddNoteUseCase
+import com.example.notepad.domain.NoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CreateNoteViewModel(context: Context): ViewModel() {
-    private val repository = NotesRepositoryImpl.getInstance(context)
+sealed interface CreateNoteCommand{
+    data class InputTitle(val title: String): CreateNoteCommand
+    data class InputContent(val content: String): CreateNoteCommand
+    data object Save: CreateNoteCommand
+    data object Back: CreateNoteCommand
+}
 
-    private val addNoteUseCase = AddNoteUseCase(repository)
+sealed interface CreateNoteState{
+    data class Creation(
+        val title: String = "",
+        val content: String = "",
+        val isSaveEnabled: Boolean = false
+    ): CreateNoteState
+
+    data object Finished: CreateNoteState
+}
+@HiltViewModel
+class CreateNoteViewModel(
+    private val addNoteUseCase: AddNoteUseCase
+): ViewModel() {
+
 
     private val _state = MutableStateFlow<CreateNoteState>(CreateNoteState.Creation())
 
@@ -71,19 +90,3 @@ class CreateNoteViewModel(context: Context): ViewModel() {
     }
 }
 
-sealed interface CreateNoteCommand{
-    data class InputTitle(val title: String): CreateNoteCommand
-    data class InputContent(val content: String): CreateNoteCommand
-    data object Save: CreateNoteCommand
-    data object Back: CreateNoteCommand
-}
-
-sealed interface CreateNoteState{
-    data class Creation(
-        val title: String = "",
-        val content: String = "",
-        val isSaveEnabled: Boolean = false
-    ): CreateNoteState
-
-    data object Finished: CreateNoteState
-}

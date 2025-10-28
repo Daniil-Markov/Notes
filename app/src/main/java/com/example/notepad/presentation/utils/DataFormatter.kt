@@ -1,9 +1,8 @@
-package com.example.notepad.presentation.screens
+package com.example.notepad.presentation.utils
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
-
 
 object DataFormatter {
 

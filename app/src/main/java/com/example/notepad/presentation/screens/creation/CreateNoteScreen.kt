@@ -35,17 +35,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.notepad.presentation.screens.DataFormatter
+import com.example.notepad.presentation.utils.DataFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateNoteScreen(
     modifier: Modifier = Modifier,
-    context: Context = LocalContext.current.applicationContext,
-    viewModel: CreateNoteViewModel = viewModel{
-        CreateNoteViewModel(context)
-    },
+    viewModel: CreateNoteViewModel = hiltViewModel(),
     onFinished: () -> Unit
 ){
     val state by viewModel.state.collectAsState()

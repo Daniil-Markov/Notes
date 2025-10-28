@@ -1,6 +1,8 @@
 package com.example.notepad.domain
 
-class EditNoteUseCase(
+import javax.inject.Inject
+
+class EditNoteUseCase @Inject constructor(
     private val repository: NoteRepository
 ) {
     suspend operator fun invoke(note: Note){
