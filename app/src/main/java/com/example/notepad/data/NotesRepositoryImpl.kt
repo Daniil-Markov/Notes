@@ -15,7 +15,7 @@ import java.util.concurrent.locks.Lock
 import javax.inject.Inject
 
 
-class NotesRepositoryImpl @Inject private constructor(
+class NotesRepositoryImpl @Inject constructor(
     private val notesDao: NotesDao,
 ): NoteRepository{
 

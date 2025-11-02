@@ -7,10 +7,12 @@ import com.example.notepad.data.NotesRepositoryImpl
 import com.example.notepad.domain.AddNoteUseCase
 import com.example.notepad.domain.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.migration.CustomInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed interface CreateNoteCommand{
     data class InputTitle(val title: String): CreateNoteCommand
@@ -29,7 +31,7 @@ sealed interface CreateNoteState{
     data object Finished: CreateNoteState
 }
 @HiltViewModel
-class CreateNoteViewModel(
+class CreateNoteViewModel @Inject constructor(
     private val addNoteUseCase: AddNoteUseCase
 ): ViewModel() {
 

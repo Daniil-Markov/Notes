@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = EditNoteViewModel.Factory::class)
 class EditNoteViewModel @AssistedInject constructor(
-    @Assisted("noteId") private val noteId: Int,
+    @Assisted("note_id") private val noteId: Int,
     private val editNoteUseCase: EditNoteUseCase,
     private val getNoteUseCase: GetNoteUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase
@@ -28,7 +28,7 @@ class EditNoteViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory{
-        fun create(@Assisted("noteId") noteId: Int): EditNoteViewModel
+        fun create(@Assisted("note_id") noteId: Int): EditNoteViewModel
     }
     private val _state = MutableStateFlow<EditNoteState>(EditNoteState.Initial)
 

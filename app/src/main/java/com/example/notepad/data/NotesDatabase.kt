@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import javax.inject.Singleton
 
-@Singleton
+
 @Database(
     entities = [NoteDbModel::class],
     version = 1,

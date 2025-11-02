@@ -15,10 +15,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
-class NotesViewModel(
+class NotesViewModel @Inject constructor(
     private val searchNoteUseCase: SearchNoteUseCase,
     private val switchPinnedStatusUseCase: SwitchPinnedStatusUseCase,
     private val getAllNotesUseCase: GetAllNotesUseCase

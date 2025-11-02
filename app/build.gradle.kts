@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -43,11 +43,11 @@ android {
 
 dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
-    ksp("com.google.dagger:hilt-android-compiler:2.57.1")
-    implementation("com.google.dagger:hilt-android:2.57.1")
-    implementation("androidx.room:room-ktx:2.9.5")
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
+    implementation("com.google.dagger:hilt-android:2.57.2")
+    ksp("com.google.dagger:hilt-android-compiler:2.57.2")
+    implementation("androidx.room:room-runtime:2.8.3")
+    ksp("androidx.room:room-compiler:2.8.3")
+    implementation("androidx.room:room-ktx:2.8.3")
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

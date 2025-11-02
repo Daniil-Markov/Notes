@@ -2,9 +2,11 @@ package com.example.notepad.presentation.navigation
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.notepad.presentation.screens.notes.NotesScreen
 import com.example.notepad.presentation.screens.creation.CreateNoteScreen
 import com.example.notepad.presentation.screens.editing.EditNoteScreen
@@ -18,8 +20,8 @@ fun NavGraph(){
     ){
         composable(Screen.Notes.route){
             NotesScreen(
-                onNoteClick = {
-                    navController.navigate(Screen.EditNote.createRoute(it.noteId))
+                onNoteClick = {note ->
+                    navController.navigate(Screen.EditNote.createRoute(note.noteId))
                 },
                 onAddNoteClick = {
                     navController.navigate(Screen.CreateNote.route)
@@ -34,8 +36,14 @@ fun NavGraph(){
                 }
             )
         }
-        composable(Screen.EditNote.route) {
-            val noteId = Screen.EditNote.getNoteId(it.arguments)
+        composable(
+            Screen.EditNote.route,
+            arguments = listOf(
+                navArgument("note_id") {
+                    type = NavType.IntType
+                }
+            )) {backStackEntry ->
+            val noteId = backStackEntry.arguments?.getInt("note_id") ?:0
             EditNoteScreen(
                 noteId = noteId,
                 onFinished = {
@@ -55,13 +63,7 @@ sealed class Screen(val route: String){
         }
 
         fun getNoteId(arguments: Bundle?): Int{
-            return arguments?.getString("note_id")?.toInt() ?:0
+            return arguments?.getInt("note_id") ?:0
         }
     }
-}
-
-sealed interface CustomScreen{
-    data object Notes: CustomScreen
-    data object CreateNote: CustomScreen
-    data class EditNote(val noteId: Int): CustomScreen
 }

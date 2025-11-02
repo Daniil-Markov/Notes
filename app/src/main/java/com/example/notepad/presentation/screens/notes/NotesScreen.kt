@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.notepad.domain.Note
 import com.example.notepad.presentation.utils.DataFormatter
-import com.example.notepad.ui.theme.OtherNotesColors
-import com.example.notepad.ui.theme.PinnedNotesColors
+import com.example.notepad.presentation.ui.theme.OtherNotesColors
+import com.example.notepad.presentation.ui.theme.PinnedNotesColors
 
 @Composable
 fun NotesScreen(
