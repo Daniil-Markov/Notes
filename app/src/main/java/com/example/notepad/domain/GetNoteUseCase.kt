@@ -4,6 +4,6 @@ class GetNoteUseCase(
     private val repository: NoteRepository
 ) {
     operator fun invoke(noteId: Int): Note{
-        repository.getNote(noteId = noteId)
+         return repository.getNote(noteId = noteId)
     }
 }

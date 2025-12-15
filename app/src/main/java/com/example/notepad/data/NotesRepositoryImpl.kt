@@ -5,6 +5,7 @@ import com.example.notepad.domain.NoteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 object NotesRepositoryImpl: NoteRepository {
@@ -15,9 +16,17 @@ object NotesRepositoryImpl: NoteRepository {
         return notesListFlow.asStateFlow()
     }
 
-    override fun addNote(note: Note) {
-        notesListFlow.update {
-            it + note
+
+    override fun addNote(title: String, content: String) {
+        notesListFlow.update { notes ->
+            val note = Note(
+                noteId = notes.size,
+                title = title,
+                content = content,
+                updateAt = System.currentTimeMillis(),
+                isPinned = false
+            )
+            notes + note
         }
     }
 
@@ -42,10 +51,9 @@ object NotesRepositoryImpl: NoteRepository {
     }
 
     override fun searchNote(query: String): Flow<List<Note>> {
-        val currentList = notesListFlow.value
-        currentList.filter{
-            it.content == query
-        }
+       return notesListFlow.map{ notes ->
+           notes.filter { it.content.contains(query) || it.title.contains(query) }
+       }
     }
 
     override fun switchPinnedStatus(noteId: Int) {

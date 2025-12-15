@@ -3,7 +3,7 @@ package com.example.notepad.domain
 class AddNoteUseCase(
     private val repository: NoteRepository
 ) {
-    operator fun invoke(note: Note) {
-        repository.addNote(note = note)
+    operator fun invoke(title: String, content: String) {
+        repository.addNote(title = title, content = content)
     }
 }
