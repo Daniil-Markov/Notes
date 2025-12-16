@@ -1,10 +1,12 @@
 package com.example.notepad.di
 
 import android.content.Context
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.example.notepad.data.NotesDao
 import com.example.notepad.data.NotesDatabase
-import com.example.notepad.data.NotesRepositoryImpl
-import com.example.notepad.domain.NoteRepository
+import com.example.notepad.data.repository.NotesRepositoryImpl
+import com.example.notepad.domain.repository.NoteRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,7 +32,11 @@ interface DataModule {
         fun provideDataBase(
             @ApplicationContext context: Context
         ): NotesDatabase{
-            return NotesDatabase.getInstance(context)
+            return Room.databaseBuilder(
+                context = context,
+                klass = NotesDatabase::class.java,
+                name = "notes.db"
+            ).fallbackToDestructiveMigration(dropAllTables = true).build()
         }
 
         @Singleton

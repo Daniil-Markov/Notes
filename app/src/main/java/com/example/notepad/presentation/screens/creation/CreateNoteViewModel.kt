@@ -1,13 +1,10 @@
 package com.example.notepad.presentation.screens.creation
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.notepad.data.NotesRepositoryImpl
-import com.example.notepad.domain.AddNoteUseCase
-import com.example.notepad.domain.NoteRepository
+import com.example.notepad.domain.entity.ContentItem
+import com.example.notepad.domain.usecase.AddNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.migration.CustomInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -76,8 +73,8 @@ class CreateNoteViewModel @Inject constructor(
                     _state.update { previousState ->
                         if(previousState is CreateNoteState.Creation){
                             val title = previousState.title
-                            val content = previousState.content
-                            addNoteUseCase(title, content)
+                            val content =  ContentItem.Text(previousState.content)
+                            addNoteUseCase(title, listOf(content))
                             CreateNoteState.Finished
                         }
                         else{

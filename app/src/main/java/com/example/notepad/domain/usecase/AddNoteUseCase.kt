@@ -1,5 +1,7 @@
-package com.example.notepad.domain
+package com.example.notepad.domain.usecase
 
+import com.example.notepad.domain.entity.ContentItem
+import com.example.notepad.domain.repository.NoteRepository
 import javax.inject.Inject
 
 class AddNoteUseCase @Inject constructor(
@@ -7,7 +9,7 @@ class AddNoteUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         title: String,
-        content: String
+        content: List<ContentItem>
     ) {
         repository.addNote(
             title = title,

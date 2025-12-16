@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.notepad.domain.Note
+import com.example.notepad.domain.entity.Note
 import kotlinx.coroutines.flow.Flow
 
 @Dao

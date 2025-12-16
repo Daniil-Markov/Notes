@@ -3,10 +3,10 @@ package com.example.notepad.presentation.screens.notes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import com.example.notepad.domain.GetAllNotesUseCase
-import com.example.notepad.domain.Note
-import com.example.notepad.domain.SearchNoteUseCase
-import com.example.notepad.domain.SwitchPinnedStatusUseCase
+import com.example.notepad.domain.usecase.GetAllNotesUseCase
+import com.example.notepad.domain.entity.Note
+import com.example.notepad.domain.usecase.SearchNoteUseCase
+import com.example.notepad.domain.usecase.SwitchPinnedStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asStateFlow

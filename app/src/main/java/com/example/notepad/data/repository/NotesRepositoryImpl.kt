@@ -1,23 +1,19 @@
-package com.example.notepad.data
+package com.example.notepad.data.repository
 
-import android.content.Context
-import androidx.compose.runtime.currentRecomposeScope
-import com.example.notepad.domain.Note
-import com.example.notepad.domain.NoteRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.delay
+import com.example.notepad.data.NotesDao
+import com.example.notepad.data.mapper.toDbModel
+import com.example.notepad.data.mapper.toEntities
+import com.example.notepad.data.mapper.toEntity
+import com.example.notepad.domain.entity.ContentItem
+import com.example.notepad.domain.entity.Note
+import com.example.notepad.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
-import java.util.concurrent.locks.Lock
 import javax.inject.Inject
-
 
 class NotesRepositoryImpl @Inject constructor(
     private val notesDao: NotesDao,
-): NoteRepository{
+): NoteRepository {
 
 
     override fun getAllNotes(): Flow<List<Note>> {
@@ -28,11 +24,12 @@ class NotesRepositoryImpl @Inject constructor(
 
     override suspend fun addNote(
         title: String,
-        content: String,
+        content: List<ContentItem>,
         isPinned: Boolean,
         updateAt: Long
     ) {
-        val noteDbModel = NoteDbModel(0, title, content, updateAt, isPinned)
+        val note = Note(0, title, content, updateAt, isPinned)
+        val noteDbModel  = note.toDbModel()
         notesDao.addNote(noteDbModel)
     }
 

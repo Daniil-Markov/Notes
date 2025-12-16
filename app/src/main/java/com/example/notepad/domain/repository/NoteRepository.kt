@@ -1,15 +1,15 @@
-package com.example.notepad.domain
+package com.example.notepad.domain.repository
 
-import androidx.compose.runtime.Updater
+import com.example.notepad.domain.entity.ContentItem
+import com.example.notepad.domain.entity.Note
 import kotlinx.coroutines.flow.Flow
-import java.time.temporal.TemporalQuery
 
 interface NoteRepository {
     fun getAllNotes(): Flow<List<Note>>
 
     suspend fun addNote(
         title: String,
-        content: String,
+        content: List<ContentItem>,
         isPinned: Boolean,
         updateAt: Long
     )

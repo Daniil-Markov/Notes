@@ -38,7 +38,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.example.notepad.domain.Note
+import com.example.notepad.domain.entity.ContentItem
+import com.example.notepad.domain.entity.Note
 import com.example.notepad.presentation.utils.DataFormatter
 import com.example.notepad.presentation.ui.theme.OtherNotesColors
 import com.example.notepad.presentation.ui.theme.PinnedNotesColors
@@ -49,7 +50,7 @@ fun NotesScreen(
     viewModel: NotesViewModel = hiltViewModel(),
     onNoteClick: (Note) -> Unit,
     onAddNoteClick: () -> Unit
-){
+) {
     val state by viewModel.state.collectAsState()
 
     Scaffold(
@@ -70,8 +71,8 @@ fun NotesScreen(
     ) { innerPadding ->
         LazyColumn(
             contentPadding = innerPadding
-        ){
-            item{
+        ) {
+            item {
                 Title(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     text = "All Notes"
@@ -94,7 +95,7 @@ fun NotesScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            item{
+            item {
                 SubTitle(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     text = "Pinned"
@@ -104,7 +105,7 @@ fun NotesScreen(
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            item{
+            item {
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -113,14 +114,18 @@ fun NotesScreen(
                 ) {
                     itemsIndexed(
                         items = state.pinnedNotes,
-                        key = {_ , note -> note.noteId}
-                    ){index,  note ->
+                        key = { _, note -> note.noteId }
+                    ) { index, note ->
                         NoteCard(
                             modifier = Modifier.widthIn(max = 160.dp),
                             note = note,
                             onNoteClick = onNoteClick,
                             onLongClick = {
-                                viewModel.processCommands(NotesViewModel.NoteCommands.SwitchPinnedStatus(noteId = note.noteId))
+                                viewModel.processCommands(
+                                    NotesViewModel.NoteCommands.SwitchPinnedStatus(
+                                        noteId = note.noteId
+                                    )
+                                )
                             },
                             backgroundColor = PinnedNotesColors[index % PinnedNotesColors.size]
                         )
@@ -129,27 +134,33 @@ fun NotesScreen(
                 }
             }
 
-            item{
+            item {
                 SubTitle(
                     modifier = Modifier.padding(horizontal = 24.dp),
-                    text = "Others")
+                    text = "Others"
+                )
             }
 
             item {
-                Spacer(modifier = Modifier.height(24    .dp))
+                Spacer(modifier = Modifier.height(24.dp))
             }
 
             itemsIndexed(
                 items = state.otherNotes,
-                key = { _ , note ->note.noteId}
-            ){index,  note ->
+                key = { _, note -> note.noteId }
+            ) { index, note ->
                 NoteCard(
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
                     note = note,
                     onNoteClick = onNoteClick,
                     onLongClick = {
-                        viewModel.processCommands(NotesViewModel.NoteCommands.SwitchPinnedStatus(noteId = note.noteId))
+                        viewModel.processCommands(
+                            NotesViewModel.NoteCommands.SwitchPinnedStatus(
+                                noteId = note.noteId
+                            )
+                        )
                     },
                     backgroundColor = OtherNotesColors[index % OtherNotesColors.size]
                 )
@@ -167,7 +178,7 @@ fun NotesScreen(
 private fun Title(
     modifier: Modifier = Modifier,
     text: String
-){
+) {
     Text(
         modifier = modifier,
         text = text,
@@ -183,7 +194,7 @@ private fun SearchBar(
     modifier: Modifier = Modifier,
     query: String,
     onQueryChanged: (String) -> Unit
-){
+) {
     TextField(
         modifier = modifier
             .fillMaxWidth()
@@ -221,7 +232,7 @@ private fun SearchBar(
 private fun SubTitle(
     modifier: Modifier = Modifier,
     text: String
-){
+) {
     Text(
         modifier = modifier,
         text = text,
@@ -230,6 +241,7 @@ private fun SubTitle(
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
+
 @Composable
 fun NoteCard(
     modifier: Modifier = Modifier,
@@ -237,7 +249,7 @@ fun NoteCard(
     backgroundColor: Color,
     onNoteClick: (Note) -> Unit,
     onLongClick: (Note) -> Unit,
-){
+) {
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
@@ -266,15 +278,20 @@ fun NoteCard(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(24.dp))
+        note.content
+            .filterIsInstance<ContentItem.Text>()
+            .joinToString("\n") { it.text }
+            .let {
+                Text(
+                    text = it,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
 
-        Text(
-            text = note.content,
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Medium,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 
 }

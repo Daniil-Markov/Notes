@@ -1,13 +1,12 @@
 package com.example.notepad.presentation.screens.editing
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.notepad.data.NotesRepositoryImpl
-import com.example.notepad.domain.DeleteNoteUseCase
-import com.example.notepad.domain.EditNoteUseCase
-import com.example.notepad.domain.GetNoteUseCase
-import com.example.notepad.domain.Note
+import com.example.notepad.domain.entity.ContentItem
+import com.example.notepad.domain.usecase.DeleteNoteUseCase
+import com.example.notepad.domain.usecase.EditNoteUseCase
+import com.example.notepad.domain.usecase.GetNoteUseCase
+import com.example.notepad.domain.entity.Note
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = EditNoteViewModel.Factory::class)
 class EditNoteViewModel @AssistedInject constructor(
@@ -51,8 +49,9 @@ class EditNoteViewModel @AssistedInject constructor(
             is EditNoteCommand.InputContent -> {
                 _state.update { previousState ->
                     if(previousState is EditNoteState.Editing){
+                        val newContent = ContentItem.Text(command.content)
                         val newNote = previousState.note.copy(
-                            content = command.content
+                            content = listOf(newContent)
                         )
                         previousState.copy(note = newNote)
                     }
@@ -127,7 +126,17 @@ sealed interface EditNoteState{
        val note: Note
     ): EditNoteState{
         val isSaveEnabled: Boolean
-            get() = note.title.isNotBlank() && note.content.isNotBlank()
+            get() {
+                return when{
+                    note.title.isBlank() -> false
+                    note.content.isEmpty() -> false
+                    else -> {
+                        note.content.any {
+                            it !is ContentItem.Text || it.text.isNotBlank()
+                        }
+                    }
+                }
+            }
     }
 
     data object Finished: EditNoteState

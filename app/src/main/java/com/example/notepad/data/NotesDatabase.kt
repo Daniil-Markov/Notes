@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Database(
     entities = [NoteDbModel::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class NotesDatabase: RoomDatabase() {

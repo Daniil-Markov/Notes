@@ -1,5 +1,7 @@
-package com.example.notepad.domain
+package com.example.notepad.domain.usecase
 
+import com.example.notepad.domain.entity.Note
+import com.example.notepad.domain.repository.NoteRepository
 import javax.inject.Inject
 
 class EditNoteUseCase @Inject constructor(
