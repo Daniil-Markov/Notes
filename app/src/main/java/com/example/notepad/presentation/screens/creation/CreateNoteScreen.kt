@@ -1,19 +1,16 @@
 package com.example.notepad.presentation.screens.creation
 
-import android.content.Context
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,17 +27,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalGraphicsContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.notepad.domain.entity.ContentItem
 import com.example.notepad.presentation.ui.theme.CustomIcons
 import com.example.notepad.presentation.utils.DataFormatter
+import kotlinx.coroutines.NonCancellable.key
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,16 +43,18 @@ fun CreateNoteScreen(
     modifier: Modifier = Modifier,
     viewModel: CreateNoteViewModel = hiltViewModel(),
     onFinished: () -> Unit
-){
+) {
     val state by viewModel.state.collectAsState()
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
-        onResult = {
-            Log.d("CreateNoteScreen", it.toString())
+        onResult = { uri ->
+            uri?.let {
+                viewModel.processCommand(CreateNoteCommand.AddImage(it))
+            }
         }
     )
 
-    when(val currentState = state){
+    when (val currentState = state) {
         is CreateNoteState.Creation -> {
             Scaffold(
                 modifier = modifier,
@@ -79,8 +75,9 @@ fun CreateNoteScreen(
 
                         navigationIcon = {
                             Icon(
-                                modifier = Modifier.padding(start = 16.dp, end = 8.dp)
-                                    .clickable{
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 8.dp)
+                                    .clickable {
                                         viewModel.processCommand(CreateNoteCommand.Back)
                                     },
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -91,7 +88,7 @@ fun CreateNoteScreen(
                             Icon(
                                 modifier = Modifier
                                     .padding(end = 24.dp)
-                                    .clickable{
+                                    .clickable {
                                         imagePicker.launch("image/*")
                                     },
                                 imageVector = CustomIcons.AddPhoto,
@@ -106,7 +103,8 @@ fun CreateNoteScreen(
                     modifier = Modifier.padding(innerPadding)
                 ) {
                     TextField(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .padding(horizontal = 8.dp),
                         value = currentState.title,
                         onValueChange = {
@@ -140,35 +138,33 @@ fun CreateNoteScreen(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    TextField(
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(horizontal = 8.dp)
-                            .weight(1f),
-                        value = currentState.content,
-                        onValueChange = {
-                            viewModel.processCommand(CreateNoteCommand.InputContent(it))
-                        },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        textStyle = TextStyle(
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        placeholder = {
-                            Text(
-                                text = "Note something",
-                                fontSize = 16.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    LazyColumn(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        currentState.content.forEachIndexed{ index, item->
+                            item(key = index){
+                                when(item){
+                                    is ContentItem.Image -> {
+                                        TextContent(
+                                            text = item.url,
+                                            onTextChanged = {
+                                            }
 
-                            )
+                                        )
+                                    }
+                                    is ContentItem.Text -> {
+                                        TextContent(
+                                            text = item.text,
+                                            onTextChanged = {
+                                                viewModel.processCommand(CreateNoteCommand.InputContent(it, index))
+                                            }
+
+                                        )
+                                    }
+                                }
+                            }
                         }
-
-                    )
-
+                    }
                     Button(
                         modifier = Modifier
                             .padding(horizontal = 24.dp)
@@ -184,7 +180,7 @@ fun CreateNoteScreen(
                             contentColor = MaterialTheme.colorScheme.onPrimary,
                             disabledContainerColor = MaterialTheme.colorScheme.onPrimary
                         )
-                    ){
+                    ) {
                         Text(
                             text = "Save note"
                         )
@@ -193,6 +189,7 @@ fun CreateNoteScreen(
 
             }
         }
+
         CreateNoteState.Finished -> {
             LaunchedEffect(key1 = Unit) {
                 onFinished()
@@ -200,4 +197,37 @@ fun CreateNoteScreen(
 
         }
     }
+}
+
+@Composable
+fun TextContent(
+    modifier: Modifier = Modifier,
+    text: String,
+    onTextChanged: (String) -> Unit
+){
+    TextField(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        value = text,
+        onValueChange = onTextChanged,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        ),
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurface
+        ),
+        placeholder = {
+            Text(
+                text = "Note something",
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+            )
+        }
+    )
+
 }
