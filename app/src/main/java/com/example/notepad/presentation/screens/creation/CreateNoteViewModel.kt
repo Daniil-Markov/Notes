@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notepad.domain.entity.ContentItem
+import com.example.notepad.domain.entity.ContentItem.*
 import com.example.notepad.domain.usecase.AddNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,8 @@ sealed interface CreateNoteCommand {
     data object Back : CreateNoteCommand
 
     data class AddImage(val url: Uri) : CreateNoteCommand
+
+    data class DeleteImage(val index: Int): CreateNoteCommand
 }
 
 sealed interface CreateNoteState {
@@ -119,10 +122,25 @@ class CreateNoteViewModel @Inject constructor(
                         if (lastElement is ContentItem.Text && lastElement.text.isBlank()) {
                             newItems.removeAt(newItems.lastIndex)
                         }
-                        newItems.add(ContentItem.Image(command.url.toString()))
-                        newItems.add(ContentItem.Text(""))
+                        newItems.add(Image(command.url.toString()))
+                        newItems.add(Text(""))
                         previousState.copy(content = newItems)
                     } else {
+                        previousState
+                    }
+                }
+            }
+
+            is CreateNoteCommand.DeleteImage -> {
+                _state.update { previousState ->
+                    if(previousState is CreateNoteState.Creation){
+                        previousState.content.toMutableList().apply {
+                            removeAt(command.index)
+                        }.let {
+                            previousState.copy(content = it)
+                        }
+                    }
+                    else{
                         previousState
                     }
                 }

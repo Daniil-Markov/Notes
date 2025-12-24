@@ -3,13 +3,17 @@ package com.example.notepad.presentation.screens.creation
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,16 +26,21 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ComposeCompilerApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import coil3.compose.AsyncImage
 import com.example.notepad.domain.entity.ContentItem
 import com.example.notepad.presentation.ui.theme.CustomIcons
 import com.example.notepad.presentation.utils.DataFormatter
@@ -138,33 +147,17 @@ fun CreateNoteScreen(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    LazyColumn(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        currentState.content.forEachIndexed{ index, item->
-                            item(key = index){
-                                when(item){
-                                    is ContentItem.Image -> {
-                                        TextContent(
-                                            text = item.url,
-                                            onTextChanged = {
-                                            }
 
-                                        )
-                                    }
-                                    is ContentItem.Text -> {
-                                        TextContent(
-                                            text = item.text,
-                                            onTextChanged = {
-                                                viewModel.processCommand(CreateNoteCommand.InputContent(it, index))
-                                            }
-
-                                        )
-                                    }
-                                }
-                            }
+                    CreationContent(
+                      modifier = Modifier.weight(1f),
+                        content = currentState.content,
+                        onDeleteImage = {
+                            viewModel.processCommand(CreateNoteCommand.DeleteImage(it))
+                        },
+                        onTextChanged = {index, text ->
+                            viewModel.processCommand(CreateNoteCommand.InputContent(content = text, index))
                         }
-                    }
+                    )
                     Button(
                         modifier = Modifier
                             .padding(horizontal = 24.dp)
@@ -196,6 +189,106 @@ fun CreateNoteScreen(
             }
 
         }
+    }
+}
+
+@Composable
+fun CreationContent(
+    modifier: Modifier = Modifier,
+    content: List<ContentItem>,
+    onDeleteImage: (Int) -> Unit,
+    onTextChanged: (Int, String) -> Unit
+){
+    LazyColumn(
+        modifier = Modifier
+    ) {
+        content.forEachIndexed{ index, item->
+            item(key = index){
+                when(item){
+                    is ContentItem.Image -> {
+                        val isAlreadyDisplayed =
+                            index > 0 && content[index - 1] is ContentItem.Image
+                        content
+                            .drop(index)
+                            .takeWhile{ it is ContentItem.Image}
+                            .map{ (it as ContentItem.Image).url}
+                            .let{
+                                urls ->
+                                ImageContent(
+                                    imageUrl = item.url,
+                                    onImageDelete = {
+
+                                    }
+                                )
+                            }
+
+                    }
+                    is ContentItem.Text -> {
+                        TextContent(
+                            text = item.text,
+                            onTextChanged = {
+                                onTextChanged(index, it)
+                            }
+
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ImageGroup(
+    modifier: Modifier = Modifier,
+    urlList: List<String>,
+    onDeleteImage: (Int) -> Unit
+){
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ){
+        urlList.forEachIndexed { index, image ->
+            ImageContent(
+                modifier = Modifier.weight(1f),
+                imageUrl = image,
+                onImageDelete = { onDeleteImage(index) },
+            )
+        }
+    }
+}
+
+
+@Composable
+fun ImageContent(
+    modifier: Modifier = Modifier,
+    imageUrl: String,
+    onImageDelete: () -> Unit
+){
+    Box(
+        modifier = modifier
+    ){
+        AsyncImage(
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+            ,
+            model = imageUrl,
+            contentDescription = "Image from gallery",
+            contentScale = ContentScale.FillWidth
+
+        )
+        Icon(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .clickable{
+                    onImageDelete()
+                },
+            imageVector = Icons.Default.Close,
+            contentDescription = "Delete image",
+            tint = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
