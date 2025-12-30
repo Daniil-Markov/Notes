@@ -30,7 +30,6 @@ class NotesViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-
         query
             .onEach {
                input -> _state.update {
