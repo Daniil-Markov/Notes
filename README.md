@@ -1,7 +1,7 @@
 # 📝 Notes App
 
 Простое Android-приложение для управления заметками
-
+Clean Architecture + MVVM
 ---
 
 ## ✨ Функционал
