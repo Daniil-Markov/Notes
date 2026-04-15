@@ -28,9 +28,9 @@
 
 ## 📸 Скриншоты
 
-![Список заметок](assets/notes_list.png)
-![Редактирование заметки](assets/edit_note.png)
-![Создание заметки](assets/create_note.png)
+<img src="assets/notes_list.png" width="300" alt="Список заметок">
+<img src="assets/edit_note.png" width="300" alt="Редактирование заметки">
+<img src="assets/create_note.png" width="300" alt="Создание заметки">
 
 
 ---
