@@ -16,13 +16,14 @@
 
 ## 🛠 Технологии
 
-![Kotlin](https://img.shields.io/badge/Kotlin-0095D5?logo=kotlin&logoColor=white)
-![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-3DDC84?logo=android&logoColor=white)
-![Room](https://img.shields.io/badge/Room-3DDC84?logo=android&logoColor=white)
-![Coroutines/Flow](https://img.shields.io/badge/Coroutines-5E5CE6?logo=kotlin&logoColor=white)
-![Hilt](https://img.shields.io/badge/Hilt-5E5CE6?logo=dagger&logoColor=white)
-![Jetpack Navigation](https://img.shields.io/badge/Jetpack%20Navigation-3DDC84?logo=android&logoColor=white)
-![Coil](https://img.shields.io/badge/Coil-3DDC84?logo=android&logoColor=white)
+[![Kotlin](https://img.shields.io/badge/Kotlin-0095D5?logo=kotlin&logoColor=white&style=flat-square)](https://kotlinlang.org)
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-3DDC84?logo=android&logoColor=white&style=flat-square)](https://developer.android.com/jetpack/compose)
+[![Room](https://img.shields.io/badge/Room-3DDC84?logo=android&logoColor=white&style=flat-square)](https://developer.android.com/training/data-storage/room)
+[![Coroutines](https://img.shields.io/badge/Coroutines-5E5CE6?logo=kotlin&logoColor=white&style=flat-square)](https://kotlinlang.org/docs/coroutines-overview.html)
+[![Flow](https://img.shields.io/badge/Flow-5E5CE6?logo=kotlin&logoColor=white&style=flat-square)](https://kotlinlang.org/docs/flow.html)
+[![Hilt](https://img.shields.io/badge/Hilt-5E5CE6?logo=dagger&logoColor=white&style=flat-square)](https://developer.android.com/training/dependency-injection/hilt-android)
+[![Navigation](https://img.shields.io/badge/Jetpack_Navigation-3DDC84?logo=android&logoColor=white&style=flat-square)](https://developer.android.com/guide/navigation)
+[![Coil](https://img.shields.io/badge/Coil-3DDC84?logo=android&logoColor=white&style=flat-square)](https://coil-kt.github.io/coil/)
 
 ---
 
